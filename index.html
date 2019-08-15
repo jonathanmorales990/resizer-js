@@ -5,21 +5,20 @@
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded", function (event) {
 				var element = document.getElementById('resizer');
+				var parent = element.parentNode;
 				resizer.applyResizer = function (element) {
-					//element.addEventListener("click", this.setResizerBorders, false);
 					element.addEventListener("mousedown", function(e){
-						document.addEventListener("mousemove", function(e){
-							element.style.width = e.clientX+'px';
-							element.style.height = e.clientY+'px';
-							console.log(element.offset);
-						}, false);
+						parent.addEventListener("mousemove", this.onResizeEvent, false);
 					}, false);
 					element.addEventListener("mouseup", function(){
-						document.removeEventListener("mousemove",null, false);
+						parent.removeEventListener("mousemove", this.onResizeEvent, false);
 					}, false);
 				}
-				resizer.setResizerBorders = function (e) {
-					addClass(e.target, 'enable-resizer');
+				resizer.onResizeEvent = function (e) {
+					var x = e.clientX; //x position within the element.
+					var y = e.clientY;  //y position within the element.
+					element.style.width = x+'px';
+					element.style.height = y+'px';
 				}
 				resizer.applyResizer(element);
 			});
