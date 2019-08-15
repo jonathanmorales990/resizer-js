@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<script type="text/javascript">
+			document.addEventListener("DOMContentLoaded", function (event) {
+				var element = document.getElementById('resizer');
+				resizer.applyResizer = function (element) {
+					//element.addEventListener("click", this.setResizerBorders, false);
+					element.addEventListener("mousedown", function(e){
+						document.addEventListener("mousemove", function(e){
+							element.style.width = e.clientX+'px';
+							element.style.height = e.clientY+'px';
+							console.log(element.offset);
+						}, false);
+					}, false);
+					element.addEventListener("mouseup", function(){
+						document.removeEventListener("mousemove",null, false);
+					}, false);
+				}
+				resizer.setResizerBorders = function (e) {
+					addClass(e.target, 'enable-resizer');
+				}
+				resizer.applyResizer(element);
+			});
+			function clickEvent(e) {
+				// e = Mouse click event.
+				var rect = e.target.getBoundingClientRect();
+				var x = e.clientX - rect.left; //x position within the element.
+				var y = e.clientY - rect.top;  //y position within the element.
+			}
+			function hasClass (el, className) {
+				if (el.classList)
+					return el.classList.contains(className);
+				return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+			}
+			function addClass (el, className) {
+				if (el.classList)
+					el.classList.add(className)
+				else if (!hasClass(el, className))
+					el.className += " " + className;
+			}
+			function removeClass (el, className) {
+				if (el.classList)
+					el.classList.remove(className)
+				else if (hasClass(el, className)) {
+					var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+					el.className = el.className.replace(reg, ' ');
+				}
+			}
+		</script>
+		<style type="text/css">
+			.enable-resizer {
+
+			}
+			.enable-resizer:after {
+
+			}
+		</style>
+		<title>Resizer</title>
+	</head>
+	<body>
+		<div id="resizer" style="width: 250px; height: 250px; background-color: lightgrey;"></div>
+	</body>
+</hmtl>
