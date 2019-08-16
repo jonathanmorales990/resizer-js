@@ -7,12 +7,7 @@
 				var element = document.getElementById('resizer');
 				var parent = element.parentNode;
 				resizer.applyResizer = function (element) {
-					element.addEventListener("mousedown", function(e){
-						parent.addEventListener("mousemove", this.onResizeEvent, false);
-					}, false);
-					element.addEventListener("mouseup", function(){
-						parent.removeEventListener("mousemove", this.onResizeEvent, false);
-					}, false);
+					mouseMoveWhilstDown(element, this.onResizeEvent);
 				}
 				resizer.onResizeEvent = function (e) {
 					var x = e.clientX; //x position within the element.
@@ -47,6 +42,18 @@
 					el.className = el.className.replace(reg, ' ');
 				}
 			}
+			function mouseMoveWhilstDown(target, whileMove) {
+				var endMove = function () {
+					window.removeEventListener('mousemove', whileMove);
+					window.removeEventListener('mouseup', endMove);
+				};
+				target.addEventListener('mousedown', function (event) {
+					event.stopPropagation(); // remove if you do want it to propagate ..
+					window.addEventListener('mousemove', whileMove);
+					window.addEventListener('mouseup', endMove);
+				});
+			}
+			//mouseMoveWhilstDown(document.getElementById('move'), function (event) { console.log(event); });
 		</script>
 		<style type="text/css">
 			.enable-resizer {
