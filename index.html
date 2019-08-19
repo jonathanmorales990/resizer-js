@@ -7,13 +7,32 @@
 				var element = document.getElementById('resizer');
 				var parent = element.parentNode;
 				resizer.applyResizer = function (element) {
-					mouseMoveWhilstDown(element, this.onResizeEvent);
+					this.addBorders(element);
+					this.onMoveEvent(element, this.onResizeEvent);
 				}
 				resizer.onResizeEvent = function (e) {
-					var x = e.clientX; //x position within the element.
-					var y = e.clientY;  //y position within the element.
+					var x = e.clientX;
+					var y = e.clientY;
 					element.style.width = x+'px';
 					element.style.height = y+'px';
+				}
+				resizer.addBorders = function (element) {
+					var nodeCorner = document.createElement('div');
+					element.addEventListener('click', function (event) { 
+						console.log('cliked');
+					});
+					element.style.border = '1px solid black';
+				}
+				resizer.onMoveEvent = function (target, whileMove) {
+					var endMove = function () {
+						window.removeEventListener('mousemove', whileMove);
+						window.removeEventListener('mouseup', endMove);
+					};
+					target.addEventListener('mousedown', function (event) {
+						event.stopPropagation();
+						window.addEventListener('mousemove', whileMove);
+						window.addEventListener('mouseup', endMove);
+					});
 				}
 				resizer.applyResizer(element);
 			});
@@ -42,18 +61,11 @@
 					el.className = el.className.replace(reg, ' ');
 				}
 			}
-			function mouseMoveWhilstDown(target, whileMove) {
-				var endMove = function () {
-					window.removeEventListener('mousemove', whileMove);
-					window.removeEventListener('mouseup', endMove);
-				};
-				target.addEventListener('mousedown', function (event) {
-					event.stopPropagation(); // remove if you do want it to propagate ..
-					window.addEventListener('mousemove', whileMove);
-					window.addEventListener('mouseup', endMove);
-				});
+			function setAttributes(el, attrs) {
+				for (var key in attrs) {
+					el.setAttribute(key, attrs[key]);
+				}
 			}
-			//mouseMoveWhilstDown(document.getElementById('move'), function (event) { console.log(event); });
 		</script>
 		<style type="text/css">
 			.enable-resizer {
