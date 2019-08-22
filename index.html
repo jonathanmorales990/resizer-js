@@ -7,31 +7,79 @@
 				var element = document.getElementById('resizer');
 				var parent = element.parentNode;
 				resizer.applyResizer = function (element) {
-					this.addBorders(element);
-					this.onMoveEvent(element, this.onResizeEvent);
+/*					element.style.position = 'relative';*/
+					element.style.display = 'inline-block';
+					this.addCorners(element);
+					this.onClickEvent(element);
+					this.onMoveEvent(element);
 				}
 				resizer.onResizeEvent = function (e) {
-					var x = e.clientX;
-					var y = e.clientY;
+					console.log(element.getBoundingClientRect());
+					var x = e.clientX - element.getBoundingClientRect().top;
+					var y = e.clientY - element.getBoundingClientRect().left;
 					element.style.width = x+'px';
 					element.style.height = y+'px';
 				}
-				resizer.addBorders = function (element) {
+				resizer.onResizeBottomRight = function (e) {
+					console.log(element.getBoundingClientRect());
+					var x = e.clientX - element.getBoundingClientRect().left;
+					var y = e.clientY - element.getBoundingClientRect().top;
+					element.style.width = x+'px';
+					element.style.height = y+'px';
+				}
+				resizer.onResizeTopRight = function (e) {
+					console.log(element.getBoundingClientRect());
+					var x = e.clientX - element.getBoundingClientRect().top;
+					var y = e.clientY - element.getBoundingClientRect().height;
+					element.style.width = x+'px';
+					element.style.height = y+'px';
+				}
+				resizer.addCorners = function () {
 					var nodeCorner = document.createElement('div');
-					element.addEventListener('click', function (event) { 
-						console.log('cliked');
+					setAttributes(nodeCorner, {'class': 'resizer-top-left-corner'});
+					element.appendChild(nodeCorner);
+					nodeCorner = nodeCorner.cloneNode(true);
+					setAttributes(nodeCorner, {'class': 'resizer-top-right-corner'});
+					element.appendChild(nodeCorner);
+					nodeCorner = nodeCorner.cloneNode(true);
+					setAttributes(nodeCorner, {'class': 'resizer-bottom-right-corner'});
+					element.appendChild(nodeCorner);
+					nodeCorner = nodeCorner.cloneNode(true);
+					setAttributes(nodeCorner, {'class': 'resizer-bottom-left-corner'});
+					element.appendChild(nodeCorner);
+				}
+				resizer.onClickEvent = function (element) {
+					element.addEventListener('mousedown', function (event) { 
+						element.style.border = '1px solid black';
+						addClass(element, 'enable-resizer');
+						event.stopPropagation();
 					});
-					element.style.border = '1px solid black';
+					window.addEventListener('mousedown', function (event) {
+						element.style.border = 'none';
+						removeClass(element, 'enable-resizer');
+					});
 				}
 				resizer.onMoveEvent = function (target, whileMove) {
-					var endMove = function () {
-						window.removeEventListener('mousemove', whileMove);
-						window.removeEventListener('mouseup', endMove);
+					var bottomRightCorner = document.getElementsByClassName('resizer-bottom-right-corner');
+					var topRightCorner = document.getElementsByClassName('resizer-top-right-corner');
+
+					var endMoveBottomRight = function () {
+						window.removeEventListener('mousemove', resizer.onResizeBottomRight);
+						window.removeEventListener('mouseup', endMoveBottomRight);
 					};
-					target.addEventListener('mousedown', function (event) {
+					var endMoveTopRight = function () {
+						window.removeEventListener('mousemove', resizer.onResizeTopRight);
+						window.removeEventListener('mouseup', endMoveTopRight);
+					};
+					bottomRightCorner[0].addEventListener('mousedown', function (event) {
 						event.stopPropagation();
-						window.addEventListener('mousemove', whileMove);
-						window.addEventListener('mouseup', endMove);
+						window.addEventListener('mousemove', resizer.onResizeBottomRight);
+						window.addEventListener('mouseup', endMoveBottomRight);
+					});
+					topRightCorner[0].addEventListener('mousedown', function (event) {
+						event.stopPropagation();
+						window.addEventListener('mousemove', resizer.onResizeTopRight);
+						window.addEventListener('mouseup', endMoveTopRight);
 					});
 				}
 				resizer.applyResizer(element);
@@ -68,16 +116,56 @@
 			}
 		</script>
 		<style type="text/css">
-			.enable-resizer {
-
+			.resizer-top-left-corner {
+				cursor: nwse-resize;
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 7px;
+				height: 7px;
+				background-color: black;
 			}
-			.enable-resizer:after {
-
+			.resizer-top-right-corner {
+				cursor: nesw-resize;
+				display: none;
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 7px;
+				height: 7px;
+				background-color: black;
+			}
+			.resizer-bottom-left-corner {
+				cursor: nesw-resize;
+				display: none;
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 7px;
+				height: 7px;
+				background-color: black;
+			}
+			.resizer-bottom-right-corner {
+				cursor: nwse-resize;
+				display: none;
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				width: 7px;
+				height: 7px;
+				background-color: black;
+			}
+			.enable-resizer > .resizer-top-left-corner,
+			.enable-resizer > .resizer-top-right-corner,
+			.enable-resizer > .resizer-bottom-left-corner,
+			.enable-resizer > .resizer-bottom-right-corner {
+				display: block;
 			}
 		</style>
 		<title>Resizer</title>
 	</head>
 	<body>
-		<div id="resizer" style="width: 250px; height: 250px; background-color: lightgrey;"></div>
+		<div id="resizer" style="width: 150px; height: 150px; background-color: lightgrey; position: relative;"></div>
 	</body>
 </hmtl>
