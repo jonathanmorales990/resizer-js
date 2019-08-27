@@ -5,7 +5,6 @@
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded", function (event) {
 				var element = document.getElementById('resizer');
-				var parent = element.parentNode;
 				resizer = {
 					original_width: 0,
 					original_height: 0,
@@ -13,7 +12,8 @@
 					original_y: 0,
 					original_mouse_x: 0,
 					original_mouse_y: 0,
-					minimum_size: 20
+					minimum_size: 20,
+					element: null
 				}
 				resizer.applyResizer = function (element) {
 					element.style.position = 'relative';
@@ -23,21 +23,31 @@
 					this.onMoveEvent(element);
 				}
 				resizer.onResizeEvent = function (event) {
-/*					console.log(resizer);
-					var x = e.clientX - element.getBoundingClientRect().top;
-					var y = e.clientY - element.getBoundingClientRect().left;
-					element.style.width = x+'px';
-					element.style.height = y+'px';*/
-					var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
-					var height = resizer.original_height + (event.pageY - resizer.original_mouse_y)
-					if (width > resizer.minimum_size) {
-						element.style.width = width + 'px'
+					if (hasClass(resizer.currect_corner, 'bottom-right')) {
+						var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
+						var height = resizer.original_height + (event.pageY - resizer.original_mouse_y);
+						if (width > resizer.minimum_size) {
+							resizer.element.style.width = width + 'px';
+						}
+						if (height > resizer.minimum_size) {
+							resizer.element.style.height = height + 'px';
+						}
 					}
-					if (height > resizer.minimum_size) {
-						element.style.height = height + 'px'
+					if (hasClass(resizer.currect_corner, 'bottom-left')) {
+						var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
+						var height = resizer.original_height - (event.pageY - resizer.original_mouse_y);
+						if (height > resizer.minimum_size) {
+							resizer.element.style.height = height + 'px';
+						}
+						if (width > resizer.minimum_size) {
+							resizer.element.style.width = width + 'px';
+							resizer.element.style.left = resizer.original_x + (event.pageX - resizer.original_mouse_x) + 'px';
+						}
 					}
+/*					if (hasClass(resizer.currect_corner, 'top-right')) {}
+					if (hasClass(resizer.currect_corner, 'top-left')) {}*/
 				}
-				resizer.addCorners = function () {
+				resizer.addCorners = function (element) {
 					var nodeCorner = document.createElement('div');
 					setAttributes(nodeCorner, {'class': 'corner top-left'});
 					element.appendChild(nodeCorner);
@@ -54,11 +64,13 @@
 				resizer.onClickEvent = function (element) {
 					element.addEventListener('mousedown', function (event) { 
 						element.style.border = '1px solid black';
+						resizer.element = element;
 						addClass(element, 'enable-resizer');
 						event.stopPropagation();
 					});
 					window.addEventListener('mousedown', function (event) {
 						element.style.border = 'none';
+						resizer.element = null;
 						removeClass(element, 'enable-resizer');
 					});
 				}
@@ -69,26 +81,23 @@
 						window.removeEventListener('mousemove', resizer.onResizeEvent);
 						window.removeEventListener('mouseup', endMove);
 					};
-					corners[2].addEventListener('mousedown', function (event) {
-						event.stopPropagation();
-						resizer.original_width = parseFloat(getComputedStyle(element, null).getPropertyValue('width').replace('px', ''));
-						resizer.original_height = parseFloat(getComputedStyle(element, null).getPropertyValue('height').replace('px', ''));
-						resizer.original_x = element.getBoundingClientRect().left;
-						resizer.original_y = element.getBoundingClientRect().top;
-						resizer.original_mouse_x = event.pageX;
-						resizer.original_mouse_y = event.pageY;
-						window.addEventListener('mousemove', resizer.onResizeEvent);
-						window.addEventListener('mouseup', endMove);
-					});
+					for (i=0; i< corners.length; i++) {
+						corners[i].addEventListener('mousedown', function (event) {
+							event.stopPropagation();
+							resizer.original_width = parseFloat(getComputedStyle(element, null).getPropertyValue('width').replace('px', ''));
+							resizer.original_height = parseFloat(getComputedStyle(element, null).getPropertyValue('height').replace('px', ''));
+							resizer.original_x = element.getBoundingClientRect().left;
+							resizer.original_y = element.getBoundingClientRect().top;
+							resizer.original_mouse_x = event.pageX;
+							resizer.original_mouse_y = event.pageY;
+							resizer.currect_corner = event.target;
+							window.addEventListener('mousemove', resizer.onResizeEvent);
+							window.addEventListener('mouseup', endMove);
+						});
+					}
 				}
 				resizer.applyResizer(element);
 			});
-			function clickEvent(e) {
-				// e = Mouse click event.
-				var rect = e.target.getBoundingClientRect();
-				var x = e.clientX - rect.left; //x position within the element.
-				var y = e.clientY - rect.top;  //y position within the element.
-			}
 			function hasClass (el, className) {
 				if (el.classList)
 					return el.classList.contains(className);
