@@ -1,0 +1,52 @@
+.corner.top-left {
+	cursor: nwse-resize;
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 7px;
+	height: 7px;
+	background-color: black;
+}
+.corner.top-right {
+	cursor: nesw-resize;
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 7px;
+	height: 7px;
+	background-color: black;
+}
+.corner.bottom-left {
+	cursor: nesw-resize;
+	display: none;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 7px;
+	height: 7px;
+	background-color: black;
+}
+.corner.bottom-right {
+	cursor: nwse-resize;
+	display: none;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 7px;
+	height: 7px;
+	background-color: black;
+}
+.enable-resizer > .corner.top-left,
+.enable-resizer > .corner.top-right,
+.enable-resizer > .corner.bottom-left,
+.enable-resizer > .corner.bottom-right {
+	display: block;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
