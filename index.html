@@ -23,6 +23,7 @@
 					this.onMoveEvent(element);
 				}
 				resizer.onResizeEvent = function (event) {
+					var offset = 8;
 					if (hasClass(resizer.currect_corner, 'bottom-right')) {
 						var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
 						var height = resizer.original_height + (event.pageY - resizer.original_mouse_y);
@@ -34,18 +35,51 @@
 						}
 					}
 					if (hasClass(resizer.currect_corner, 'bottom-left')) {
-						var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
-						var height = resizer.original_height - (event.pageY - resizer.original_mouse_y);
+						var width = resizer.original_width - (event.pageX - resizer.original_mouse_x);
+						var height = resizer.original_height + (event.pageY - resizer.original_mouse_y);
 						if (height > resizer.minimum_size) {
 							resizer.element.style.height = height + 'px';
 						}
-						if (width > resizer.minimum_size) {
-							resizer.element.style.width = width + 'px';
-							resizer.element.style.left = resizer.original_x + (event.pageX - resizer.original_mouse_x) + 'px';
+						if (width > resizer.minimum_size ) {
+							var left_calc = (resizer.original_x + (event.pageX - resizer.original_mouse_x)) - offset;
+							if (left_calc > 0) {
+								resizer.element.style.width = width + 'px';
+								resizer.element.style.left = left_calc + 'px'; 
+							}
 						}
 					}
-/*					if (hasClass(resizer.currect_corner, 'top-right')) {}
-					if (hasClass(resizer.currect_corner, 'top-left')) {}*/
+					if (hasClass(resizer.currect_corner, 'top-right')) {
+						var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
+						var height = resizer.original_height - (event.pageY - resizer.original_mouse_y);
+						if (height > resizer.minimum_size) {
+							var top_calc = (resizer.original_y + (event.pageY - resizer.original_mouse_y)) - offset;
+							if (top_calc > 0) {
+								resizer.element.style.height = height + 'px';
+								resizer.element.style.top = top_calc + 'px';
+							}
+						}
+						if (width > resizer.minimum_size ) {
+							resizer.element.style.width = width + 'px';
+						}
+					}
+					if (hasClass(resizer.currect_corner, 'top-left')) {
+						var width = resizer.original_width - (event.pageX - resizer.original_mouse_x);
+						var height = resizer.original_height - (event.pageY - resizer.original_mouse_y);
+						if (width > resizer.minimum_size ) {
+							var left_calc = (resizer.original_x + (event.pageX - resizer.original_mouse_x)) - offset;
+							if (left_calc > 0) {
+								resizer.element.style.width = width + 'px';
+								resizer.element.style.left = left_calc + 'px'; 
+							}
+						}
+						if (height > resizer.minimum_size) {
+							var top_calc = (resizer.original_y + (event.pageY - resizer.original_mouse_y)) - offset;
+							if (top_calc > 0) {
+								resizer.element.style.height = height + 'px';
+								resizer.element.style.top = top_calc + 'px';
+							}
+						}		
+					}
 				}
 				resizer.addCorners = function (element) {
 					var nodeCorner = document.createElement('div');
@@ -169,6 +203,12 @@
 			.enable-resizer > .corner.bottom-left,
 			.enable-resizer > .corner.bottom-right {
 				display: block;
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
 			}
 		</style>
 		<title>Resizer</title>
