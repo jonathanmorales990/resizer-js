@@ -15,7 +15,7 @@ resizer.applyResizer = function (element) {
 	this.onMoveEvent(element);
 }
 resizer.onResizeEvent = function (event) {
-	if (hasClass(resizer.currect_corner, 'bottom-right')) {
+	if (resizer.hasClass(resizer.currect_corner, 'bottom-right')) {
 		var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
 		var height = resizer.original_height + (event.pageY - resizer.original_mouse_y);
 		if (width > resizer.minimum_size) {
@@ -25,7 +25,7 @@ resizer.onResizeEvent = function (event) {
 			resizer.element.style.height = height + 'px';
 		}
 	}
-	if (hasClass(resizer.currect_corner, 'bottom-left')) {
+	if (resizer.hasClass(resizer.currect_corner, 'bottom-left')) {
 		var width = resizer.original_width - (event.pageX - resizer.original_mouse_x);
 		var height = resizer.original_height + (event.pageY - resizer.original_mouse_y);
 		if (height > resizer.minimum_size) {
@@ -39,7 +39,7 @@ resizer.onResizeEvent = function (event) {
 			}
 		}
 	}
-	if (hasClass(resizer.currect_corner, 'top-right')) {
+	if (resizer.hasClass(resizer.currect_corner, 'top-right')) {
 		var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
 		var height = resizer.original_height - (event.pageY - resizer.original_mouse_y);
 		if (height > resizer.minimum_size) {
@@ -53,7 +53,7 @@ resizer.onResizeEvent = function (event) {
 			resizer.element.style.width = width + 'px';
 		}
 	}
-	if (hasClass(resizer.currect_corner, 'top-left')) {
+	if (resizer.hasClass(resizer.currect_corner, 'top-left')) {
 		var width = resizer.original_width - (event.pageX - resizer.original_mouse_x);
 		var height = resizer.original_height - (event.pageY - resizer.original_mouse_y);
 		if (width > resizer.minimum_size ) {
@@ -74,34 +74,33 @@ resizer.onResizeEvent = function (event) {
 }
 resizer.addCorners = function (element) {
 	var nodeCorner = document.createElement('div');
-	setAttributes(nodeCorner, {'class': 'corner top-left'});
+	this.setAttributes(nodeCorner, {'class': 'corner top-left'});
 	element.appendChild(nodeCorner);
 	nodeCorner = nodeCorner.cloneNode(true);
-	setAttributes(nodeCorner, {'class': 'corner top-right'});
+	this.setAttributes(nodeCorner, {'class': 'corner top-right'});
 	element.appendChild(nodeCorner);
 	nodeCorner = nodeCorner.cloneNode(true);
-	setAttributes(nodeCorner, {'class': 'corner bottom-right'});
+	this.setAttributes(nodeCorner, {'class': 'corner bottom-right'});
 	element.appendChild(nodeCorner);
 	nodeCorner = nodeCorner.cloneNode(true);
-	setAttributes(nodeCorner, {'class': 'corner bottom-left'});
+	this.setAttributes(nodeCorner, {'class': 'corner bottom-left'});
 	element.appendChild(nodeCorner);
 }
 resizer.onClickEvent = function (element) {
 	element.addEventListener('mousedown', function (event) { 
 		element.style.border = '1px solid black';
 		resizer.element = element;
-		addClass(element, 'enable-resizer');
+		resizer.addClass(element, 'enable-resizer');
 		event.stopPropagation();
 	});
 	window.addEventListener('mousedown', function (event) {
 		element.style.border = 'none';
 		resizer.element = null;
-		removeClass(element, 'enable-resizer');
+		resizer.removeClass(element, 'enable-resizer');
 	});
 }
 resizer.onMoveEvent = function (element) {
 	var corners = element.getElementsByClassName('corner');
-
 	var endMove = function () {
 		window.removeEventListener('mousemove', resizer.onResizeEvent);
 		window.removeEventListener('mouseup', endMove);
@@ -116,32 +115,31 @@ resizer.onMoveEvent = function (element) {
 			resizer.original_mouse_x = event.pageX;
 			resizer.original_mouse_y = event.pageY;
 			resizer.currect_corner = event.target;
-			console.log(getComputedStyle(element, null).getPropertyValue('top'))
 			window.addEventListener('mousemove', resizer.onResizeEvent);
 			window.addEventListener('mouseup', endMove);
 		});
 	}
 }
-function hasClass (el, className) {
+resizer.hasClass = function (el, className) {
 	if (el.classList)
 		return el.classList.contains(className);
 	return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
 }
-function addClass (el, className) {
+resizer.addClass = function (el, className) {
 	if (el.classList)
 		el.classList.add(className)
-	else if (!hasClass(el, className))
+	else if (!this.hasClass(el, className))
 		el.className += " " + className;
 }
-function removeClass (el, className) {
+resizer.removeClass = function (el, className) {
 	if (el.classList)
 		el.classList.remove(className)
-	else if (hasClass(el, className)) {
+	else if (this.hasClass(el, className)) {
 		var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
 		el.className = el.className.replace(reg, ' ');
 	}
 }
-function setAttributes(el, attrs) {
+resizer.setAttributes = function (el, attrs) {
 	for (var key in attrs) {
 		el.setAttribute(key, attrs[key]);
 	}
