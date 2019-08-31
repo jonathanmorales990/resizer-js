@@ -6,8 +6,8 @@ Writed with Vanilla JavaScript .
 Clone or download from github and include the script and css on the head.<br/> 
 ```
 <head>
-	<script type="text/javascript" src="dist/resizer.js"></script>
-	<link rel="stylesheet" type="text/css" href="dist/resizer.css"/>
+	<script type="text/javascript" src="resizer-js/dist/resizer.js"></script>
+	<link rel="stylesheet" type="text/css" href="resizer-js/dist/resizer.css"/>
 </head>
 ```
 Apply the resizer.<br/> 
