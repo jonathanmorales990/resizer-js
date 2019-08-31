@@ -9,14 +9,12 @@ resizer = {
 	element: null
 }
 resizer.applyResizer = function (element) {
-	element.style.position = 'relative';
-	element.style.display = 'block';
+	element.style.position = 'absolute';
 	this.addCorners(element);
 	this.onClickEvent(element);
 	this.onMoveEvent(element);
 }
 resizer.onResizeEvent = function (event) {
-	var offset = 8;
 	if (hasClass(resizer.currect_corner, 'bottom-right')) {
 		var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
 		var height = resizer.original_height + (event.pageY - resizer.original_mouse_y);
@@ -34,10 +32,10 @@ resizer.onResizeEvent = function (event) {
 			resizer.element.style.height = height + 'px';
 		}
 		if (width > resizer.minimum_size ) {
-			var left_calc = (resizer.original_x + (event.pageX - resizer.original_mouse_x)) - offset;
+			var left_calc = (resizer.original_x + (event.pageX - resizer.original_mouse_x));
 			if (left_calc > 0) {
 				resizer.element.style.width = width + 'px';
-				resizer.element.style.left = left_calc + 'px'; 
+				resizer.element.style.left = left_calc + 'px';
 			}
 		}
 	}
@@ -45,7 +43,7 @@ resizer.onResizeEvent = function (event) {
 		var width = resizer.original_width + (event.pageX - resizer.original_mouse_x);
 		var height = resizer.original_height - (event.pageY - resizer.original_mouse_y);
 		if (height > resizer.minimum_size) {
-			var top_calc = (resizer.original_y + (event.pageY - resizer.original_mouse_y)) - offset;
+			var top_calc = (resizer.original_y + (event.pageY - resizer.original_mouse_y));
 			if (top_calc > 0) {
 				resizer.element.style.height = height + 'px';
 				resizer.element.style.top = top_calc + 'px';
@@ -59,14 +57,14 @@ resizer.onResizeEvent = function (event) {
 		var width = resizer.original_width - (event.pageX - resizer.original_mouse_x);
 		var height = resizer.original_height - (event.pageY - resizer.original_mouse_y);
 		if (width > resizer.minimum_size ) {
-			var left_calc = (resizer.original_x + (event.pageX - resizer.original_mouse_x)) - offset;
+			var left_calc = (resizer.original_x + (event.pageX - resizer.original_mouse_x));
 			if (left_calc > 0) {
 				resizer.element.style.width = width + 'px';
 				resizer.element.style.left = left_calc + 'px'; 
 			}
 		}
 		if (height > resizer.minimum_size) {
-			var top_calc = (resizer.original_y + (event.pageY - resizer.original_mouse_y)) - offset;
+			var top_calc = (resizer.original_y + (event.pageY - resizer.original_mouse_y));
 			if (top_calc > 0) {
 				resizer.element.style.height = height + 'px';
 				resizer.element.style.top = top_calc + 'px';
@@ -113,8 +111,8 @@ resizer.onMoveEvent = function (element) {
 			event.stopPropagation();
 			resizer.original_width = parseFloat(getComputedStyle(element, null).getPropertyValue('width').replace('px', ''));
 			resizer.original_height = parseFloat(getComputedStyle(element, null).getPropertyValue('height').replace('px', ''));
-			resizer.original_x = element.getBoundingClientRect().left;
-			resizer.original_y = element.getBoundingClientRect().top;
+			resizer.original_x = parseFloat(getComputedStyle(element, null).getPropertyValue('left').replace('px', ''));
+			resizer.original_y = parseFloat(getComputedStyle(element, null).getPropertyValue('top').replace('px', ''));
 			resizer.original_mouse_x = event.pageX;
 			resizer.original_mouse_y = event.pageY;
 			resizer.currect_corner = event.target;
